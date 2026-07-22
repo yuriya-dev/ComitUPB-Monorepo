@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Globe, Shield, Smartphone, Cpu, Palette, Users } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { getLandingDivisions } from "@/lib/services/api";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -38,7 +39,9 @@ export default function Divisions() {
     { scope: containerRef }
   );
 
-  const divisions = [
+  const iconMap: Record<string, any> = { Globe, Shield, Smartphone, Cpu, Palette };
+
+  const defaultDivisions = [
     {
       id: "div-web",
       name: "Divisi Web Development",
@@ -80,6 +83,25 @@ export default function Divisions() {
       techStack: ["Figma", "Adobe Illustrator", "Design System", "Prototyping", "Usability Test"],
     },
   ];
+
+  const [divisions, setDivisions] = useState<any[]>(defaultDivisions);
+
+  useEffect(() => {
+    async function loadDivisions() {
+      const liveData = await getLandingDivisions();
+      if (liveData && liveData.length > 0) {
+        setDivisions(liveData.map((d: any) => ({
+          id: d.id,
+          name: d.name,
+          icon: iconMap[d.icon] || Globe,
+          description: d.description,
+          memberCount: d.member_count || 30,
+          techStack: ["React", "TypeScript", "Tailwind CSS", "API Integrasi"]
+        })));
+      }
+    }
+    loadDivisions();
+  }, []);
 
   return (
     <section ref={containerRef} id="divisions" className="py-20 md:py-28 bg-slate-50/70 relative">

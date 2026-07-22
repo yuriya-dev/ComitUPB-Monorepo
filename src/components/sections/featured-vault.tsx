@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search, Play, BookOpen, Sparkles, CheckCircle } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { getLandingVaultModules } from "@/lib/services/api";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -85,7 +86,7 @@ export default function FeaturedVault() {
     { id: "design", label: "UI/UX Design" },
   ];
 
-  const modules = [
+  const defaultModules = [
     {
       id: 1,
       category: "web",
@@ -123,6 +124,26 @@ export default function FeaturedVault() {
       level: "Beginner",
     },
   ];
+
+  const [modules, setModules] = useState<any[]>(defaultModules);
+
+  useEffect(() => {
+    async function loadVault() {
+      const liveData = await getLandingVaultModules();
+      if (liveData && liveData.length > 0) {
+        setModules(liveData.map(m => ({
+          id: m.id,
+          category: m.category,
+          title: m.title,
+          speaker: m.speaker,
+          duration: m.duration,
+          image: m.image_url || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80',
+          level: m.level
+        })));
+      }
+    }
+    loadVault();
+  }, []);
 
   const filteredModules = modules.filter((mod) => {
     const matchCategory = activeTab === "all" || mod.category === activeTab;
