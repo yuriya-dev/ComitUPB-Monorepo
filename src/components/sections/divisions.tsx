@@ -148,7 +148,7 @@ export default function Divisions() {
                 <div className="mt-6 pt-4 border-t border-slate-200">
                   <div className="text-xs font-bold uppercase tracking-wider text-dark/70 mb-2">Tech Stack Utama:</div>
                   <div className="flex flex-wrap gap-1.5">
-                    {div.techStack.map((tech, i) => (
+                    {div.techStack.map((tech: string, i: number) => (
                       <span
                         key={i}
                         className="px-2.5 py-1 rounded-[6px_12px_12px_6px] bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-300"
