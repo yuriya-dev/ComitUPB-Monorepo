@@ -35,7 +35,7 @@ CREATE TABLE members (
   role TEXT NOT NULL DEFAULT 'Anggota',
   email TEXT NOT NULL,
   avatar_url TEXT,
-  status TEXT NOT NULL CHECK (status IN ('Active', 'Alumni', 'Inactive')) DEFAULT 'Active',
+  status TEXT NOT NULL CHECK (status IN ('Active', 'Alumni', 'Inactive', 'Pending')) DEFAULT 'Active',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

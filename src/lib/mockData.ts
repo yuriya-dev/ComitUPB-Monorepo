@@ -172,6 +172,16 @@ export const mockMembers: MemberItem[] = [
     role: 'Anggota',
     email: 'dimas@gmail.com',
     status: 'Active'
+  },
+  {
+    id: 'mem-4',
+    name: 'Faris Gunawan',
+    npm: '312210512',
+    division_id: 'div-cyber',
+    division_name: 'Divisi Cyber Security',
+    role: 'Calon Anggota',
+    email: 'faris.g@gmail.com',
+    status: 'Pending'
   }
 ];
 

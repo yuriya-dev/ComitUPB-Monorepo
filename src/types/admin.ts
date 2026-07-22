@@ -31,7 +31,7 @@ export interface MemberItem {
   role: string;
   email: string;
   avatar_url?: string;
-  status: 'Active' | 'Alumni' | 'Inactive';
+  status: 'Active' | 'Alumni' | 'Inactive' | 'Pending';
 }
 
 export interface ShowcaseItem {
