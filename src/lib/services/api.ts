@@ -3,26 +3,46 @@ import { RegisterInput, ContactInput, ApiResponse } from "@/types";
 
 export async function registerMember(data: RegisterInput): Promise<ApiResponse> {
   try {
+    const divisionIdMap: Record<string, string> = {
+      'Web Development': 'div-web',
+      'Cyber Security': 'div-cyber',
+      'Mobile App Development': 'div-mobile',
+      'Data Science & AI': 'div-ai',
+      'UI/UX Design': 'div-uiux'
+    };
+
+    const divisionName = data.divisionInterest ? `Divisi ${data.divisionInterest}` : 'Divisi Web Development';
+
     const newMember = {
       id: `mem-${Date.now()}`,
       name: data.name.trim(),
-      npm: `3122${Math.floor(1000 + Math.random() * 9000)}`,
-      division_name: data.divisionInterest || 'Divisi Web Development',
-      role: 'Anggota',
+      npm: data.major ? data.major.trim() : `3122${Math.floor(1000 + Math.random() * 9000)}`,
+      division_id: divisionIdMap[data.divisionInterest || 'Web Development'] || 'div-web',
+      division_name: divisionName,
+      role: 'Calon Anggota',
       email: data.email.trim().toLowerCase(),
-      status: 'Active'
+      status: 'Pending'
     };
 
-    const { error } = await supabase.from('members').insert([newMember]);
+    const { data: insertedData, error } = await supabase
+      .from('members')
+      .insert([newMember])
+      .select()
+      .single();
 
     if (error) {
-      console.warn('Supabase member insert fallback:', error.message);
+      console.error('Supabase member insert error:', error);
+      return {
+        success: false,
+        message: `Gagal menyimpan ke database: ${error.message}`,
+        error: error.message
+      };
     }
 
     return {
       success: true,
-      message: "Pendaftaran berhasil! Tim ComitUPB akan menghubungi kamu melalui email untuk instruksi selanjutnya.",
-      data: newMember,
+      message: "Pendaftaran berhasil! Data kamu sudah tersimpan di sistem dan menunggu verifikasi pengurus ComitUPB.",
+      data: insertedData || newMember,
     };
   } catch (error: any) {
     return {
@@ -45,16 +65,25 @@ export async function sendContactMessage(data: ContactInput): Promise<ApiRespons
       created_at: new Date().toISOString()
     };
 
-    const { error } = await supabase.from('contact_messages').insert([newMessage]);
+    const { data: insertedMsg, error } = await supabase
+      .from('contact_messages')
+      .insert([newMessage])
+      .select()
+      .single();
 
     if (error) {
-      console.warn('Supabase message insert fallback:', error.message);
+      console.error('Supabase message insert error:', error);
+      return {
+        success: false,
+        message: `Gagal mengirim pesan: ${error.message}`,
+        error: error.message
+      };
     }
 
     return {
       success: true,
       message: "Pesan Anda berhasil terkirim! Tim ComitUPB akan segera merespons.",
-      data: newMessage,
+      data: insertedMsg || newMessage,
     };
   } catch (error: any) {
     return {
