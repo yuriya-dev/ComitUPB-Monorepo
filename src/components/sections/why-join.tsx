@@ -112,7 +112,7 @@ export default function WhyJoin() {
               <ul className="text-sm text-gray-muted space-y-1 list-disc list-inside font-medium">
                 <li>Mahasiswa aktif Universitas Putra Bangsa.</li>
                 <li>Memiliki antusiasme dan komitmen belajar IT.</li>
-                <li>Terbuka untuk semua jurusan (TI, SI, Manajemen, Akuntansi, dll).</li>
+                <li>Terbuka untuk semua jurusan (Ilmu Komputer, Sains Data, Manajemen, Akuntansi, dll).</li>
               </ul>
             </div>
           </div>

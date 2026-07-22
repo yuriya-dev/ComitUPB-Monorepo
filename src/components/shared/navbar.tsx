@@ -39,7 +39,7 @@ export default function Navbar({ onOpenRegisterModal }: NavbarProps) {
             className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg p-1"
           >
             <div className="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
-              <img src="logo.png" alt="logo" />
+              <img src="logo.svg" alt="logo" />
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-black tracking-tight text-dark flex items-center gap-1">

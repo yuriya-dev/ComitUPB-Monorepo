@@ -7,10 +7,10 @@ export const siteConfig = {
   contact: {
     email: "info@comitupb.org",
     location: "Kampus Utama Universitas Putra Bangsa, Jl. Ronggowarsito No. 18, Pejagoan, Kebumen",
-    instagram: "https://instagram.com/comitupb",
-    github: "https://github.com/comitupb",
-    linkedin: "https://linkedin.com/company/comitupb",
-    telegram: "https://t.me/comitupb",
+    instagram: "https://instagram.com/commit_upb",
+    github: "https://github.com/commit-upb",
+    linkedin: "https://linkedin.com/company/commit-upb",
+    discord: "https://discord.gg/h4JXudfrAY",
   },
   navLinks: [
     { name: "Beranda", href: "/" },

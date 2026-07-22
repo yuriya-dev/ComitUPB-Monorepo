@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ArrowRight, Play, Star, Code2, Rocket } from "lucide-react";
 import Link from "next/link";
 import gsap from "gsap";
@@ -23,6 +23,40 @@ export default function Hero({ onOpenRegisterModal }: HeroProps) {
   const polaroidFrontRef = useRef<HTMLDivElement>(null);
   const badge1Ref = useRef<HTMLDivElement>(null);
   const badge2Ref = useRef<HTMLDivElement>(null);
+
+  // Rotating phrases for looping text animation
+  const phrases = [
+    "Kembangkan Karir IT.",
+    "Bangun Portofolio Impian.",
+    "Kuasai Skill Masa Depan.",
+    "Raih Kesempatan Magang.",
+  ];
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const phraseRef = useRef<HTMLSpanElement>(null);
+
+  // Loop phrase animation using GSAP
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (phraseRef.current) {
+        gsap.to(phraseRef.current, {
+          y: -20,
+          opacity: 0,
+          duration: 0.35,
+          ease: "power2.in",
+          onComplete: () => {
+            setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+            gsap.fromTo(
+              phraseRef.current,
+              { y: 20, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }
+            );
+          },
+        });
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [phrases.length]);
 
   useGSAP(
     () => {
@@ -143,11 +177,11 @@ export default function Hero({ onOpenRegisterModal }: HeroProps) {
               </div>
             </div>
 
-            {/* Main Headline */}
+            {/* Main Headline with Looping Text & Without Wavy Line */}
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12] text-dark">
               Belajar. Terapkan. <br />
-              <span className="text-gradient underline decoration-primary/30 decoration-wavy underline-offset-8">
-                Kembangkan Karir IT.
+              <span ref={phraseRef} className="text-gradient inline-block min-h-[1.2em]">
+                {phrases[currentPhraseIndex]}
               </span>
             </h1>
 
@@ -207,13 +241,13 @@ export default function Hero({ onOpenRegisterModal }: HeroProps) {
               >
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
                   <img
-                    src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80"
+                    src="hero1.png"
                     alt="Workshop ComitUPB"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="mt-3 text-center">
-                  <span className="text-xs font-bold text-slate-700 tracking-wider">#WorkshopWebDev2025</span>
+                  <span className="text-xs font-bold text-slate-700 tracking-wider">#SabtuKopdar</span>
                 </div>
               </div>
 
@@ -224,7 +258,7 @@ export default function Hero({ onOpenRegisterModal }: HeroProps) {
               >
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
                   <img
-                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=80"
+                    src="hero2.png"
                     alt="Mahasiswa ComitUPB Belajar"
                     className="w-full h-full object-cover"
                   />
@@ -238,7 +272,7 @@ export default function Hero({ onOpenRegisterModal }: HeroProps) {
                 </div>
                 <div className="mt-3 flex items-center justify-between px-1">
                   <span className="text-xs font-bold text-slate-800">Komunitas IT UPB</span>
-                  <span className="text-[11px] text-gray-muted font-semibold">250+ Members</span>
+                  <span className="text-[11px] text-gray-muted font-semibold">99+ Members</span>
                 </div>
               </div>
 

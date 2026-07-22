@@ -5,6 +5,7 @@ import Hero from "@/components/sections/hero";
 import TechStackBar from "@/components/sections/tech-stack-bar";
 import LearningPaths from "@/components/sections/learning-paths";
 import FeaturedVault from "@/components/sections/featured-vault";
+import CommunityBanner from "@/components/sections/community-banner";
 import Testimonials from "@/components/sections/testimonials";
 import CtaBanner from "@/components/sections/cta-banner";
 import RegisterModal from "@/components/shared/register-modal";
@@ -28,6 +29,9 @@ export default function HomePage() {
 
       {/* Interactive Vault / Featured Module Showcase (Inspired by reference image "Inside the Replay Vault") */}
       <FeaturedVault />
+
+      {/* Community Banner Showcase Section */}
+      <CommunityBanner />
 
       {/* Member Testimonials */}
       <Testimonials />
