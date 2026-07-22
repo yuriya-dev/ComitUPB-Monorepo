@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 6 104 198;
+    --dark: 15 23 42;
+    --gray-muted: 100 116 139;
+    --light-blue: 234 244 255;
+    --border-custom: 214 233 250;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+
+  body {
+    @apply bg-white text-dark antialiased selection:bg-primary selection:text-white;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(214, 233, 250, 0.7);
+  }
+
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600;
+  }
+
+  .bg-gradient-hero {
+    background: radial-gradient(circle at 50% 20%, rgba(234, 244, 255, 0.8) 0%, rgba(255, 255, 255, 1) 70%);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 25px -5px rgba(6, 104, 198, 0.25);
+  }
+
+  .badge-sculpted {
+    @apply inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[6px_18px_18px_6px] bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider border-[1.5px] border-primary/30 shadow-[3px_3px_0px_0px_rgba(6,104,198,0.12)];
+  }
+
+  .card-sculpted {
+    @apply bg-white rounded-[26px_8px_26px_26px] border-[1.5px] border-slate-200/90 shadow-[0_10px_30px_-5px_rgba(6,104,198,0.06),_4px_4px_0px_0px_rgba(6,104,198,0.08)] hover:border-primary/50 hover:shadow-[0_20px_40px_-8px_rgba(6,104,198,0.15),_6px_6px_0px_0px_rgba(6,104,198,0.18)] hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .card-sculpted-tr {
+    @apply bg-white rounded-[8px_26px_26px_26px] border-[1.5px] border-slate-200/90 shadow-[0_10px_30px_-5px_rgba(6,104,198,0.06),_4px_4px_0px_0px_rgba(6,104,198,0.08)] hover:border-primary/50 hover:shadow-[0_20px_40px_-8px_rgba(6,104,198,0.15),_6px_6px_0px_0px_rgba(6,104,198,0.18)] hover:-translate-y-1 transition-all duration-300;
+  }
+
+  /* Hack Club inspired polaroid & card utilities */
+  .hack-polaroid {
+    @apply bg-white p-3 pt-3 pb-6 rounded-polaroid shadow-polaroid border-[3px] border-white transition-all duration-300 hover:scale-105 hover:z-30 hover:shadow-hack-hover cursor-pointer;
+  }
+
+  .hack-card {
+    @apply bg-white rounded-2xl border-2 border-slate-100 shadow-hack hover:shadow-hack-hover hover:-translate-y-1.5 transition-all duration-300;
+  }
+
+  .btn-primary-tactile {
+    @apply inline-flex items-center justify-center gap-2.5 bg-primary text-white px-7 py-3.5 rounded-[14px] font-bold text-base border-[1.5px] border-primary-600 shadow-[0_4px_0_0_#044484] hover:shadow-[0_6px_0_0_#033263] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all duration-200;
+  }
+
+  .btn-secondary-sculpted {
+    @apply inline-flex items-center justify-center gap-2 bg-white text-slate-800 px-6 py-3.5 rounded-[14px] font-bold text-base border-[1.5px] border-slate-300 shadow-[3px_3px_0px_0px_#CBD5E1] hover:border-primary hover:text-primary hover:shadow-[3px_3px_0px_0px_rgba(6,104,198,0.25)] hover:-translate-y-0.5 transition-all duration-200;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0668C6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0556A5;
+}
+
