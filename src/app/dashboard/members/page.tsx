@@ -326,7 +326,7 @@ export default function MembersPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="block text-slate-600 font-bold mb-1">NPM / Prodi</label>
               <input
@@ -345,6 +345,16 @@ export default function MembersPage() {
                 placeholder="email@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-[12px] px-3.5 py-2.5 text-dark font-semibold focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-slate-600 font-bold mb-1">Nomor WhatsApp / HP</label>
+              <input
+                type="tel"
+                placeholder="081234567890"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-[12px] px-3.5 py-2.5 text-dark font-semibold focus:outline-none focus:border-primary"
               />
             </div>
