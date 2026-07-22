@@ -1,0 +1,13 @@
+{
+  "name": "comitupb-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:public": "npm --prefix client-public run dev",
+    "dev:admin": "npm --prefix client-admin run dev",
+    "build:server": "npm --prefix server run build",
+    "build:public": "npm --prefix client-public run build",
+    "build:admin": "npm --prefix client-admin run build"
+  }
+}
