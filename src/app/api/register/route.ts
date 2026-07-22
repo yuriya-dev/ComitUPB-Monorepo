@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { RegisterInput } from "@/types";
-
-// Mock database in-memory store for member registrations
-const mockMembers: Array<RegisterInput & { id: string; status: string; createdAt: string }> = [];
+import { supabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   try {
@@ -25,39 +23,48 @@ export async function POST(request: Request) {
 
     if (!body.major || !body.major.trim()) {
       return NextResponse.json(
-        { success: false, message: "Program studi/jurusan wajib diisi." },
+        { success: false, message: "Program studi/jurusan/NPM wajib diisi." },
         { status: 400 }
       );
     }
 
-    // Check existing email
-    const existing = mockMembers.find((m) => m.email.toLowerCase() === body.email.toLowerCase());
-    if (existing) {
-      return NextResponse.json(
-        { success: false, message: "Email ini sudah terdaftar sebagai calon anggota ComitUPB." },
-        { status: 409 }
-      );
-    }
-
-    // Save record
-    const newMember = {
-      id: `mem_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-      name: body.name.trim(),
-      email: body.email.trim().toLowerCase(),
-      major: body.major.trim(),
-      divisionInterest: body.divisionInterest || "General",
-      reason: body.reason || "",
-      status: "Pending",
-      createdAt: new Date().toISOString(),
+    const divisionIdMap: Record<string, string> = {
+      'Web Development': 'div-web',
+      'Cyber Security': 'div-cyber',
+      'Mobile App': 'div-mobile',
+      'Data & AI': 'div-ai',
+      'Creative UI/UX': 'div-uiux'
     };
 
-    mockMembers.push(newMember);
+    const divisionName = body.divisionInterest ? `Divisi ${body.divisionInterest}` : 'Divisi Web Development';
+
+    const newMember = {
+      id: `mem-${Date.now()}`,
+      name: body.name.trim(),
+      npm: body.major.trim(),
+      division_id: divisionIdMap[body.divisionInterest || 'Web Development'] || 'div-web',
+      division_name: divisionName,
+      role: 'Calon Anggota',
+      email: body.email.trim().toLowerCase(),
+      status: 'Pending'
+    };
+
+    // Insert directly into Supabase members table
+    const { data, error } = await supabase.from('members').insert([newMember]).select().single();
+
+    if (error) {
+      console.error('Supabase error registering member:', error);
+      return NextResponse.json(
+        { success: false, message: `Gagal menyimpan ke database: ${error.message}` },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
         success: true,
         message: "Pendaftaran berhasil! Tim ComitUPB akan menghubungi kamu melalui email untuk instruksi selanjutnya.",
-        data: newMember,
+        data: data || newMember,
       },
       { status: 201 }
     );

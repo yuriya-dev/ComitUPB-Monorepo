@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { ContactInput } from "@/types";
-
-const mockMessages: Array<ContactInput & { id: string; createdAt: string }> = [];
+import { supabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   try {
@@ -36,21 +35,30 @@ export async function POST(request: Request) {
     }
 
     const newMessage = {
-      id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      id: `msg-${Date.now()}`,
       name: body.name.trim(),
       email: body.email.trim().toLowerCase(),
       subject: body.subject.trim(),
       message: body.message.trim(),
-      createdAt: new Date().toISOString(),
+      is_read: false,
+      created_at: new Date().toISOString(),
     };
 
-    mockMessages.push(newMessage);
+    const { data, error } = await supabase.from('contact_messages').insert([newMessage]).select().single();
+
+    if (error) {
+      console.error('Supabase error inserting contact message:', error);
+      return NextResponse.json(
+        { success: false, message: `Gagal mengirim pesan: ${error.message}` },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
         success: true,
         message: "Pesan Anda berhasil terkirim! Tim ComitUPB akan segera merespons.",
-        data: newMessage,
+        data: data || newMessage,
       },
       { status: 200 }
     );
