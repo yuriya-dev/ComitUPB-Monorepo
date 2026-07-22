@@ -34,6 +34,7 @@ CREATE TABLE members (
   division_name TEXT,
   role TEXT NOT NULL DEFAULT 'Anggota',
   email TEXT NOT NULL,
+  phone_number TEXT,
   avatar_url TEXT,
   status TEXT NOT NULL CHECK (status IN ('Active', 'Alumni', 'Inactive', 'Pending')) DEFAULT 'Active',
   created_at TIMESTAMPTZ DEFAULT NOW()

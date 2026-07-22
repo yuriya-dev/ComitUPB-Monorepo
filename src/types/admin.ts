@@ -30,6 +30,7 @@ export interface MemberItem {
   division_name: string;
   role: string;
   email: string;
+  phone_number?: string;
   avatar_url?: string;
   status: 'Active' | 'Alumni' | 'Inactive' | 'Pending';
 }

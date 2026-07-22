@@ -23,6 +23,7 @@ export default function MembersPage() {
   const [divisionName, setDivisionName] = useState('Divisi Web Development');
   const [role, setRole] = useState('Anggota');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [status, setStatus] = useState<'Active' | 'Alumni' | 'Inactive' | 'Pending'>('Active');
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function MembersPage() {
     setDivisionName('Divisi Web Development');
     setRole('Anggota');
     setEmail('');
+    setPhoneNumber('');
     setStatus('Active');
     setIsModalOpen(true);
   };
@@ -53,6 +55,7 @@ export default function MembersPage() {
     setDivisionName(mem.division_name);
     setRole(mem.role);
     setEmail(mem.email);
+    setPhoneNumber(mem.phone_number || '');
     setStatus(mem.status);
     setIsModalOpen(true);
   };
@@ -93,6 +96,7 @@ export default function MembersPage() {
       division_name: divisionName,
       role,
       email: email || `${npm}@comitupb.org`,
+      phone_number: phoneNumber,
       status
     };
 
@@ -232,7 +236,9 @@ export default function MembersPage() {
                       </div>
                       <div>
                         <div>{mem.name}</div>
-                        <div className="text-[10px] text-slate-400 font-medium">{mem.email}</div>
+                        <div className="text-[10px] text-slate-400 font-medium">
+                          {mem.email} {mem.phone_number ? `• ${mem.phone_number}` : ''}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 font-mono text-slate-600 font-semibold">{mem.npm}</td>
