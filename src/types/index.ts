@@ -63,6 +63,7 @@ export interface FAQItem {
 export interface RegisterInput {
   name: string;
   email: string;
+  phone_number?: string;
   major: string;
   divisionInterest?: string;
   reason?: string;

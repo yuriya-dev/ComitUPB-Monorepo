@@ -13,7 +13,8 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    major: "Informatika",
+    phone_number: "",
+    major: "S1 Informatika",
     divisionInterest: "Web Development",
     reason: "",
   });
@@ -36,7 +37,8 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
       setFormData({
         name: "",
         email: "",
-        major: "Informatika",
+        phone_number: "",
+        major: "S1 Informatika",
         divisionInterest: "Web Development",
         reason: "",
       });
@@ -132,6 +134,21 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                 placeholder="email.mahasiswa@mhs.upb.ac.id"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-[12px] border-[1.5px] border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all shadow-[2px_2px_0px_0px_#CBD5E1]"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="reg-phone" className="block text-xs font-bold uppercase text-dark mb-1.5">
+                Nomor WhatsApp / HP <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="reg-phone"
+                type="tel"
+                required
+                placeholder="081234567890"
+                value={formData.phone_number}
+                onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-[12px] border-[1.5px] border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all shadow-[2px_2px_0px_0px_#CBD5E1]"
               />
             </div>

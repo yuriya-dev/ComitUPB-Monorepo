@@ -21,6 +21,7 @@ export async function registerMember(data: RegisterInput): Promise<ApiResponse> 
       division_name: divisionName,
       role: 'Calon Anggota',
       email: data.email.trim().toLowerCase(),
+      phone_number: data.phone_number ? data.phone_number.trim() : '',
       status: 'Pending'
     };
 
