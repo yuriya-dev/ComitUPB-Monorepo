@@ -5,9 +5,11 @@ import { Calendar as CalendarIcon, MapPin, Plus, Search, Edit2, Trash2, Upload }
 import { mockEvents } from '@/lib/mockData';
 import { EventItem } from '@/types/admin';
 import Modal from '@/components/Modal';
+import { getEvents, addEvent, updateEvent, deleteEvent } from '@/services/dataService';
 
 export default function EventsPage() {
   const [events, setEvents] = useState<EventItem[]>(mockEvents);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   
   // Modal State for Add / Edit Event
@@ -24,6 +26,16 @@ export default function EventsPage() {
   const [registeredCount, setRegisteredCount] = useState(0);
   const [status, setStatus] = useState<'Open' | 'Closed' | 'Draft' | 'Finished'>('Open');
   const [imageUrl, setImageUrl] = useState('');
+
+  React.useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      const data = await getEvents();
+      setEvents(data);
+      setLoading(false);
+    }
+    loadData();
+  }, []);
 
   const filteredEvents = events.filter((evt) =>
     evt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -70,45 +82,43 @@ export default function EventsPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveEvent = (e: React.FormEvent) => {
+  const handleSaveEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !date) return;
 
+    const eventPayload = {
+      title,
+      category,
+      date,
+      location: location || 'UPB Kebumen',
+      description,
+      quota: Number(quota),
+      registered_count: Number(registeredCount),
+      status,
+      image_url: imageUrl || 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80'
+    };
+
     if (editingId) {
-      setEvents(events.map(evt => evt.id === editingId ? {
-        ...evt,
-        title,
-        category,
-        date,
-        location: location || 'UPB Kebumen',
-        description,
-        quota: Number(quota),
-        registered_count: Number(registeredCount),
-        status,
-        image_url: imageUrl || 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80'
-      } : evt));
+      const success = await updateEvent(editingId, eventPayload);
+      if (success) {
+        setEvents(events.map(evt => evt.id === editingId ? { ...evt, ...eventPayload } : evt));
+      }
     } else {
-      const newEvt: EventItem = {
-        id: `evt-${Date.now()}`,
-        title,
-        category,
-        date,
-        location: location || 'UPB Kebumen',
-        description,
-        quota: Number(quota),
-        registered_count: 0,
-        status,
-        image_url: imageUrl || 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80'
-      };
-      setEvents([newEvt, ...events]);
+      const created = await addEvent(eventPayload);
+      if (created) {
+        setEvents([created, ...events]);
+      }
     }
 
     setIsModalOpen(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus event kegiatan ini?')) {
-      setEvents(events.filter(e => e.id !== id));
+      const success = await deleteEvent(id);
+      if (success) {
+        setEvents(events.filter(e => e.id !== id));
+      }
     }
   };
 

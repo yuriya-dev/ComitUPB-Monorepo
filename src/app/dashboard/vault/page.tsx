@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, 
   Search, 
@@ -15,9 +15,11 @@ import {
 import { mockVaultModules } from '@/lib/mockData';
 import { VaultModuleItem } from '@/types/admin';
 import Modal from '@/components/Modal';
+import { getVaultModules, addVaultModule, updateVaultModule, deleteVaultModule } from '@/services/dataService';
 
 export default function VaultPage() {
   const [modules, setModules] = useState<VaultModuleItem[]>(mockVaultModules);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -41,6 +43,16 @@ export default function VaultPage() {
     { id: 'ai', label: 'AI & Data Science' },
     { id: 'design', label: 'UI/UX Design' },
   ];
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      const data = await getVaultModules();
+      setModules(data);
+      setLoading(false);
+    }
+    loadData();
+  }, []);
 
   const filteredModules = modules.filter((mod) => {
     const matchCategory = activeCategory === 'all' || mod.category === activeCategory;
@@ -84,7 +96,7 @@ export default function VaultPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveModule = (e: React.FormEvent) => {
+  const handleSaveModule = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !speaker.trim()) return;
 
@@ -95,46 +107,48 @@ export default function VaultPage() {
       design: 'UI/UX Design'
     };
 
+    const payload = {
+      title,
+      speaker,
+      category,
+      category_name: categoryNames[category] || 'Web Development',
+      duration: duration || '45:00',
+      video_url: videoUrl || 'https://youtube.com',
+      image_url: imageUrl || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
+      level,
+      is_published: true,
+      created_at: new Date().toISOString()
+    };
+
     if (editingId) {
-      setModules(modules.map(mod => mod.id === editingId ? {
-        ...mod,
-        title,
-        speaker,
-        category,
-        category_name: categoryNames[category] || 'Web Development',
-        duration: duration || '45:00',
-        video_url: videoUrl || 'https://youtube.com',
-        image_url: imageUrl || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
-        level
-      } : mod));
+      const success = await updateVaultModule(editingId, payload);
+      if (success) {
+        setModules(modules.map(mod => mod.id === editingId ? { ...mod, ...payload } : mod));
+      }
     } else {
-      const newMod: VaultModuleItem = {
-        id: `mod-${Date.now()}`,
-        title,
-        speaker,
-        category,
-        category_name: categoryNames[category] || 'Web Development',
-        duration: duration || '45:00',
-        video_url: videoUrl || 'https://youtube.com',
-        image_url: imageUrl || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
-        level,
-        is_published: true,
-        created_at: new Date().toISOString()
-      };
-      setModules([newMod, ...modules]);
+      const created = await addVaultModule(payload);
+      if (created) {
+        setModules([created, ...modules]);
+      }
     }
 
     setIsModalOpen(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus modul rekaman workshop ini?')) {
-      setModules(modules.filter(m => m.id !== id));
+      const success = await deleteVaultModule(id);
+      if (success) {
+        setModules(modules.filter(m => m.id !== id));
+      }
     }
   };
 
-  const togglePublish = (id: string) => {
-    setModules(modules.map(m => m.id === id ? { ...m, is_published: !m.is_published } : m));
+  const togglePublish = async (id: string, currentPublished: boolean) => {
+    const success = await updateVaultModule(id, { is_published: !currentPublished });
+    if (success) {
+      setModules(modules.map(m => m.id === id ? { ...m, is_published: !m.is_published } : m));
+    }
   };
 
   return (
@@ -244,7 +258,7 @@ export default function VaultPage() {
               {/* Actions Footer */}
               <div className="pt-3 mt-3 border-t border-slate-200/80 flex items-center justify-between">
                 <button
-                  onClick={() => togglePublish(mod.id)}
+                  onClick={() => togglePublish(mod.id, mod.is_published)}
                   className={`text-[11px] font-bold flex items-center gap-1 px-2.5 py-1 rounded-[8px] border transition-all ${
                     mod.is_published 
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 

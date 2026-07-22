@@ -1,18 +1,48 @@
 'use client';
 
-import React, { useState } from 'react';
-import { CheckCircle2, Reply } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { CheckCircle2, Reply, Trash2 } from 'lucide-react';
 import { mockMessages } from '@/lib/mockData';
 import { ContactMessage } from '@/types/admin';
+import { getContactMessages, toggleMessageReadStatus, deleteContactMessage } from '@/services/dataService';
 
 export default function MessagesPage() {
   const [messages, setMessages] = useState<ContactMessage[]>(mockMessages);
-  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(mockMessages[0] || null);
+  const [loading, setLoading] = useState(true);
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
 
-  const toggleReadStatus = (id: string) => {
-    setMessages(messages.map(m => m.id === id ? { ...m, is_read: !m.is_read } : m));
-    if (selectedMessage?.id === id) {
-      setSelectedMessage({ ...selectedMessage, is_read: !selectedMessage.is_read });
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      const data = await getContactMessages();
+      setMessages(data);
+      if (data.length > 0) setSelectedMessage(data[0]);
+      setLoading(false);
+    }
+    loadData();
+  }, []);
+
+  const handleToggleReadStatus = async (id: string, currentStatus: boolean) => {
+    const success = await toggleMessageReadStatus(id, currentStatus);
+    if (success) {
+      const updatedMessages = messages.map(m => m.id === id ? { ...m, is_read: !m.is_read } : m);
+      setMessages(updatedMessages);
+      if (selectedMessage?.id === id) {
+        setSelectedMessage({ ...selectedMessage, is_read: !selectedMessage.is_read });
+      }
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus pesan kontak masuk ini?')) {
+      const success = await deleteContactMessage(id);
+      if (success) {
+        const filtered = messages.filter(m => m.id !== id);
+        setMessages(filtered);
+        if (selectedMessage?.id === id) {
+          setSelectedMessage(filtered[0] || null);
+        }
+      }
     }
   };
 
@@ -38,7 +68,9 @@ export default function MessagesPage() {
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-dark">{msg.name}</span>
-                <span className="text-[10px] text-slate-400 font-medium">{new Date(msg.created_at).toLocaleDateString('id-ID')}</span>
+                <span className="text-[10px] text-slate-400 font-medium">
+                  {new Date(msg.created_at).toLocaleDateString('id-ID')}
+                </span>
               </div>
               <p className="text-xs font-bold text-primary truncate mb-1">{msg.subject}</p>
               <p className="text-xs text-slate-600 line-clamp-2">{msg.message}</p>
@@ -61,15 +93,24 @@ export default function MessagesPage() {
                   </p>
                 </div>
 
-                <button 
-                  onClick={() => toggleReadStatus(selectedMessage.id)}
-                  className={`px-3 py-1.5 rounded-[10px] text-xs font-bold flex items-center gap-1.5 transition-all ${
-                    selectedMessage.is_read ? 'bg-slate-100 text-slate-600 border border-slate-300' : 'bg-emerald-100 text-emerald-700 border border-emerald-300'
-                  }`}
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  {selectedMessage.is_read ? 'Sudah Dibaca' : 'Tandai Dibaca'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => handleToggleReadStatus(selectedMessage.id, selectedMessage.is_read)}
+                    className={`px-3 py-1.5 rounded-[10px] text-xs font-bold flex items-center gap-1.5 transition-all ${
+                      selectedMessage.is_read ? 'bg-slate-100 text-slate-600 border border-slate-300' : 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    {selectedMessage.is_read ? 'Sudah Dibaca' : 'Tandai Dibaca'}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteMessage(selectedMessage.id)}
+                    className="p-2 rounded-[10px] bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 transition-colors border border-slate-200"
+                    title="Hapus Pesan"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 text-dark text-sm leading-relaxed whitespace-pre-line font-medium">

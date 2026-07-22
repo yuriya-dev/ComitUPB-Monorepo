@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Calendar, 
   Users, 
@@ -12,17 +12,56 @@ import {
   Clock,
   CheckCircle2
 } from 'lucide-react';
-import { mockEvents, mockDivisions, mockMembers, mockShowcases, mockMessages } from '@/lib/mockData';
 import Link from 'next/link';
+import { 
+  getEvents, 
+  getDivisions, 
+  getMembers, 
+  getShowcases, 
+  getContactMessages 
+} from '@/services/dataService';
+import { EventItem, DivisionItem, MemberItem, ShowcaseItem, ContactMessage } from '@/types/admin';
 
 export default function DashboardOverview() {
-  const unreadMessages = mockMessages.filter(m => !m.is_read).length;
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [divisions, setDivisions] = useState<DivisionItem[]>([]);
+  const [members, setMembers] = useState<MemberItem[]>([]);
+  const [showcases, setShowcases] = useState<ShowcaseItem[]>([]);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadDashboardData() {
+      setLoading(true);
+      try {
+        const [evtData, divData, memData, scData, msgData] = await Promise.all([
+          getEvents(),
+          getDivisions(),
+          getMembers(),
+          getShowcases(),
+          getContactMessages()
+        ]);
+        setEvents(evtData);
+        setDivisions(divData);
+        setMembers(memData);
+        setShowcases(scData);
+        setMessages(msgData);
+      } catch (error) {
+        console.error('Error fetching dashboard backend metrics:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDashboardData();
+  }, []);
+
+  const unreadMessages = messages.filter(m => !m.is_read).length;
 
   const stats = [
-    { name: 'Total Event Aktif', value: mockEvents.length, icon: Calendar, change: '+2 bulan ini', bg: 'bg-primary/10 text-primary border-primary/20' },
-    { name: 'Total Pengurus & Anggota', value: mockMembers.length + 250, icon: Users, change: '250+ Anggota Aktif', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
-    { name: 'Total Divisi Keahlian', value: mockDivisions.length, icon: Layers, change: '5 Divisi Utama', bg: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20' },
-    { name: 'Showcase Proyek Selesai', value: mockShowcases.length + 43, icon: FolderKanban, change: '45+ Proyek Selesai', bg: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
+    { name: 'Total Event Aktif', value: events.length, icon: Calendar, change: 'Event Terdaftar', bg: 'bg-primary/10 text-primary border-primary/20' },
+    { name: 'Total Pengurus & Anggota', value: members.length, icon: Users, change: 'Anggota Terdata', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
+    { name: 'Total Divisi Keahlian', value: divisions.length, icon: Layers, change: 'Divisi Utama', bg: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20' },
+    { name: 'Showcase Proyek Selesai', value: showcases.length, icon: FolderKanban, change: 'Proyek Terpublikasi', bg: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
   ];
 
   return (
@@ -31,7 +70,7 @@ export default function DashboardOverview() {
       <div className="relative overflow-hidden rounded-[26px_8px_26px_26px] bg-gradient-to-r from-primary via-primary-600 to-primary-800 p-8 shadow-hack text-white">
         <div className="relative z-10 max-w-2xl">
           <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[6px_14px_14px_6px] bg-white/15 text-white text-xs font-bold uppercase tracking-wider border border-white/20 mb-4 backdrop-blur-md">
-            <CheckCircle2 className="w-3.5 h-3.5 text-white" /> Supabase Backend Sync Active
+            <CheckCircle2 className="w-3.5 h-3.5 text-white" /> Supabase Realtime Sync Active
           </span>
           <h1 className="text-3xl font-black tracking-tight mb-2">
             Selamat Datang di Portal Admin ComitUPB
@@ -55,7 +94,7 @@ export default function DashboardOverview() {
                 </div>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-black text-dark tracking-tight">{stat.value}</div>
+                <div className="text-3xl font-black text-dark tracking-tight">{loading ? '...' : stat.value}</div>
                 <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 font-bold">
                   <TrendingUp className="w-3.5 h-3.5" />
                   <span>{stat.change}</span>
@@ -82,36 +121,40 @@ export default function DashboardOverview() {
             </div>
 
             <div className="space-y-4">
-              {mockEvents.map((evt) => (
-                <div key={evt.id} className="p-4 rounded-2xl bg-slate-50/80 border-[1.5px] border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                        evt.status === 'Open' ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' : 'bg-slate-200 text-slate-600'
-                      }`}>
-                        {evt.status}
-                      </span>
-                      <span className="text-xs font-bold text-primary">{evt.category}</span>
+              {events.length === 0 ? (
+                <div className="text-slate-400 text-xs py-4 text-center">Belum ada data event.</div>
+              ) : (
+                events.map((evt) => (
+                  <div key={evt.id} className="p-4 rounded-2xl bg-slate-50/80 border-[1.5px] border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          evt.status === 'Open' ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' : 'bg-slate-200 text-slate-600'
+                        }`}>
+                          {evt.status}
+                        </span>
+                        <span className="text-xs font-bold text-primary">{evt.category}</span>
+                      </div>
+                      <h4 className="font-extrabold text-dark text-sm">{evt.title}</h4>
+                      <p className="text-xs text-slate-500 font-medium flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" /> {evt.date} • {evt.location}
+                      </p>
                     </div>
-                    <h4 className="font-extrabold text-dark text-sm">{evt.title}</h4>
-                    <p className="text-xs text-slate-500 font-medium flex items-center gap-2">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" /> {evt.date} • {evt.location}
-                    </p>
-                  </div>
 
-                  <div className="w-full sm:w-auto text-right space-y-1 min-w-[120px]">
-                    <div className="text-xs font-bold text-dark">
-                      {evt.registered_count} / {evt.quota} Peserta
-                    </div>
-                    <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-primary h-full rounded-full transition-all duration-300" 
-                        style={{ width: `${Math.min(100, (evt.registered_count / evt.quota) * 100)}%` }}
-                      ></div>
+                    <div className="w-full sm:w-auto text-right space-y-1 min-w-[120px]">
+                      <div className="text-xs font-bold text-dark">
+                        {evt.registered_count} / {evt.quota} Peserta
+                      </div>
+                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className="bg-primary h-full rounded-full transition-all duration-300" 
+                          style={{ width: `${Math.min(100, (evt.registered_count / (evt.quota || 1)) * 100)}%` }}
+                        ></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -131,18 +174,22 @@ export default function DashboardOverview() {
             </div>
 
             <div className="space-y-3">
-              {mockMessages.map((msg) => (
-                <div key={msg.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-dark">{msg.name}</span>
-                    <span className="text-[10px] text-slate-400 font-medium">
-                      {new Date(msg.created_at).toLocaleDateString('id-ID')}
-                    </span>
+              {messages.length === 0 ? (
+                <div className="text-slate-400 text-xs py-4 text-center">Belum ada pesan masuk.</div>
+              ) : (
+                messages.slice(0, 4).map((msg) => (
+                  <div key={msg.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-dark">{msg.name}</span>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        {new Date(msg.created_at).toLocaleDateString('id-ID')}
+                      </span>
+                    </div>
+                    <p className="text-xs font-bold text-primary truncate">{msg.subject}</p>
+                    <p className="text-xs text-slate-600 line-clamp-2">{msg.message}</p>
                   </div>
-                  <p className="text-xs font-bold text-primary truncate">{msg.subject}</p>
-                  <p className="text-xs text-slate-600 line-clamp-2">{msg.message}</p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             <Link href="/dashboard/messages" className="mt-4 block text-center py-2.5 text-xs font-bold text-slate-600 hover:text-primary bg-slate-100 rounded-[12px] hover:bg-light-blue transition-colors">
