@@ -1,13 +1,25 @@
 'use client';
 
 import React from 'react';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, LogOut } from 'lucide-react';
+import { useAdminAuth } from '@/lib/auth';
 
 interface NavbarProps {
   title?: string;
 }
 
 export default function Navbar({ title = 'Dashboard' }: NavbarProps) {
+  const { user, logout } = useAdminAuth(false);
+
+  const displayName = user?.name || 'Administrator';
+  const displayEmail = user?.email || 'wahyutrichya@gmail.com';
+  const initials = displayName
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+
   return (
     <header className="h-20 bg-white/90 border-b border-slate-200/80 backdrop-blur-md sticky top-0 z-30 px-8 flex items-center justify-between shadow-[0_4px_20px_-4px_rgba(6,104,198,0.04)]">
       <div>
@@ -32,15 +44,23 @@ export default function Navbar({ title = 'Dashboard' }: NavbarProps) {
           <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary animate-pulse"></span>
         </button>
 
-        {/* User Profile */}
+        {/* User Profile & Logout */}
         <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
           <div className="w-9 h-9 rounded-[10px] bg-light-blue border-[1.5px] border-primary/30 flex items-center justify-center text-primary font-black text-xs shadow-sm">
-            AD
+            {initials}
           </div>
           <div className="hidden md:block">
-            <p className="text-xs font-bold text-dark leading-tight">Administrator</p>
-            <p className="text-[10px] text-slate-500 font-medium">admin@comitupb.org</p>
+            <p className="text-xs font-bold text-dark leading-tight">{displayName}</p>
+            <p className="text-[10px] text-slate-500 font-medium">{displayEmail}</p>
           </div>
+
+          <button
+            onClick={logout}
+            title="Keluar"
+            className="p-2 rounded-[10px] text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all ml-1"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>
