@@ -3,8 +3,17 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ComitUPB - Admin Dashboard',
-  description: 'Portal Kelola Organisasi & Website ComitUPB',
+  title: 'ComitUPB Admin Portal',
+  description: 'Portal Internal Pengurus ComitUPB',
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
@@ -14,7 +23,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body className="bg-slate-950 text-slate-100 antialiased">
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+      </head>
+      <body className="bg-[#F8FAFC] text-dark antialiased">
         {children}
       </body>
     </html>
