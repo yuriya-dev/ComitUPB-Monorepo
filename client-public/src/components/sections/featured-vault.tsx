@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, Play, BookOpen, Sparkles, CheckCircle } from "lucide-react";
+import { Search, Play, BookOpen, ChevronRight, CheckCircle } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -169,7 +169,7 @@ export default function FeaturedVault() {
         {/* Section Header */}
         <div ref={headerRef} className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="badge-sculpted">
-            <Sparkles className="w-3.5 h-3.5" />
+            <ChevronRight className="w-3.5 h-3.5" />
             <span>Vault Modul Pembelajaran</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-dark tracking-tight">
@@ -202,7 +202,7 @@ export default function FeaturedVault() {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-[8px_3px_8px_8px] bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4" />
                 </div>
                 <span>Update Berkelanjutan</span>
               </div>
@@ -247,7 +247,7 @@ export default function FeaturedVault() {
                   }`}
                 >
                   <span>{cat.label}</span>
-                  {activeTab === cat.id && <Sparkles className="w-3.5 h-3.5" />}
+                  {activeTab === cat.id && <ChevronRight className="w-3.5 h-3.5" />}
                 </button>
               ))}
             </div>

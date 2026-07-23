@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Terminal } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -63,7 +63,7 @@ export default function PageHeader({
         {/* Badge */}
         <div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-light-blue border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Terminal className="w-3.5 h-3.5" />
             {badge}
           </span>
         </div>

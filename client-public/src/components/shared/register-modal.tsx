@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, UserPlus, CheckCircle2, AlertCircle, Loader2, Sparkles } from "lucide-react";
+import { X, UserPlus, CheckCircle2, AlertCircle, Loader2, Send } from "lucide-react";
 import { registerMember } from "@/lib/services/api";
 
 interface RegisterModalProps {
@@ -163,11 +163,9 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                 onChange={(e) => setFormData({ ...formData, major: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-[12px] border-[1.5px] border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all bg-white shadow-[2px_2px_0px_0px_#CBD5E1]"
               >
-                <option value="S1 Informatika">S1 Informatika</option>
-                <option value="S1 Sistem Informasi">S1 Sistem Informasi</option>
-                <option value="D3 Teknik Komputer">D3 Teknik Komputer</option>
-                <option value="S1 Manajemen">S1 Manajemen</option>
-                <option value="S1 Akuntansi">S1 Akuntansi</option>
+                <option value="S1 Informatika">S1 Ilmu Komputer</option>
+                <option value="S1 Sistem Informasi">S1 Sains Data</option>
+                <option value="D3 Teknik Komputer">S1 Agribisnis</option>
                 <option value="Lainnya">Program Studi Lainnya</option>
               </select>
             </div>
@@ -212,12 +210,10 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
                     <span>Memproses Pendaftaran...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
                     <span>Kirim Formulir Pendaftaran</span>
                   </>
                 )}

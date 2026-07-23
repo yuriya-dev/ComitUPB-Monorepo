@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Compass, Target, HeartHandshake, Sparkles } from "lucide-react";
+import { Compass, Target, HeartHandshake, BookOpenText } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -115,7 +115,7 @@ export default function About() {
         <div ref={bannerRef} className="mt-16 bg-dark text-white rounded-[28px_8px_28px_28px] border-[2px] border-slate-800 p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-[6px_6px_0px_0px_rgba(6,104,198,0.3)]">
           <div className="space-y-2 text-center md:text-left z-10">
             <h3 className="text-2xl font-bold flex items-center justify-center md:justify-start gap-2">
-              <Sparkles className="w-6 h-6 text-yellow-400" />
+              <BookOpenText className="w-6 h-6 text-yellow-400" />
               Siap Mengasah Skill IT Kamu Bersama Kami?
             </h3>
             <p className="text-slate-300 text-sm max-w-xl">
